@@ -220,7 +220,7 @@ struct FollowedStockView: View {
                                             if vm.isFirst {
                                                 vm.isFirst = false
                                                 vm.shouldShowError = false
-                                                print("i am first and am now calling for newStockChart2")
+                                                print("i am first and am now calling for vm.getNewStockChartAsync")
                                                 await vm.getNewStockChartAsync()
                                                 
                                             } else {
