@@ -798,7 +798,7 @@ extension APIFetch {
             } catch {
                 completion(.failure(error))
                 print("error: \(error)")
-                print("noooooooooooooooooooooo!!")
+                print("why! no!!")
             }
             
             
@@ -812,24 +812,23 @@ extension APIFetch {
         await withCheckedContinuation { continuation in
             fetchStockData(symbol: symbol, interval: interval, range: range) { data in
                 continuation.resume(returning: data)
-                print("okda but why")
+                print("ok da but why")
             }
         }
     }
     
     
     
+    /// Fetches the latest News for the given Stock symbol
+    /// - Parameters:
+    ///   - symbol: The symbol for the Stock that should get the news
+    ///   - completion: A completion block that either returns a result of type News or an error
     func fetchStockNews(symbol: String, completion: @escaping (Result<News, Error>) -> Void) {
-//        let headers = [
-//            "X-RapidAPI-Key": "561eb4fbafmsh5dbf010c70113c6p112a3djsn616b59572848",
-//            "X-RapidAPI-Host": "yahoo-finance15.p.rapidapi.com"
-//        ]
         
         let request = NSMutableURLRequest(url: NSURL(string: "https://api.rss2json.com/v1/api.json?rss_url=http://feeds.finance.yahoo.com/rss/2.0/headline?s=\(symbol)")! as URL,
                                           cachePolicy: .useProtocolCachePolicy,
                                           timeoutInterval: 20)
         request.httpMethod = "GET"
-//        request.allHTTPHeaderFields = headers
         
         let session = URLSession.shared
         session.configuration.timeoutIntervalForResource = 120
@@ -881,11 +880,14 @@ extension APIFetch {
         dataTask.resume()
     }
     
+    
+    
     func fetchStockNews2(symbol: String) async -> (Result<News, Error>) {
         await withCheckedContinuation { continuation in
             fetchStockNews(symbol: symbol) { data in
                 continuation.resume(returning: data)
             }
+            
         }
     }
     
