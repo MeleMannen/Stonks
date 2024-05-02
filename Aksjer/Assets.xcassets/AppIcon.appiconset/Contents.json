@@ -1,0 +1,20 @@
+{
+  "images" : [
+    {
+      "filename" : "Skjermbilde 2024–01–09 kl. 22.23 1.png",
+      "idiom" : "universal",
+      "platform" : "ios",
+      "size" : "1024x1024"
+    },
+    {
+      "filename" : "Skjermbilde 2024–01–09 kl. 22.23 2.png",
+      "idiom" : "universal",
+      "platform" : "watchos",
+      "size" : "1024x1024"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
