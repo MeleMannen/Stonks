@@ -10,7 +10,7 @@ import Charts
 
 struct RSIChartView: View {
     @AppStorage("defaultRange") private var defaultRange: RangeType = .oneDay
-    @AppStorage("selectedInterpolationMethod") private var selectedInterpolationMethod: InterpolationMethod = .cardinal
+    @AppStorage("selectedInterpolationMethod") private var selectedInterpolationMethod: InterpolationMethod = .linear
     @ObservedObject var vm: ViewModel
     
     var body: some View {

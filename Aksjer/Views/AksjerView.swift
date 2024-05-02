@@ -402,86 +402,88 @@ struct AksjerView: View {
     
     
     func checkStorage() {
-        if let storedData = followedStocksArray {
-            if let decodedData = try? JSONDecoder().decode([SearchResults].self, from: storedData) {
-                if !decodedData.isEmpty {
+        if let storedData = followedStocksArray, let storedDataStrings = followedStocksArrayStrings {
+            if let decodedData = try? JSONDecoder().decode([SearchResults].self, from: storedData), let decodedDataString = try? JSONDecoder().decode([String].self, from: storedDataStrings) {
+                if !decodedData.isEmpty && !decodedDataString.isEmpty {
                     followedStocks = decodedData
                     print("Hentet lagrede Aksjer")
+                    followedStocksStrings = decodedDataString
+                    print("Hentet lagrede Aksje strings")
                 } else {
                     print("wtf idk man")
                 }
             } else {
                 print("Error: Kunne ikke hente lagrede Aksjer!")
 //                followedStocks = defaultfollowedStocks
-                if let decodedData = try? JSONDecoder().decode([SearchResults].self, from: storedData) {
-                    if !decodedData.isEmpty {
+                if let decodedData = try? JSONDecoder().decode([SearchResults].self, from: storedData), let decodedDataString = try? JSONDecoder().decode([String].self, from: storedDataStrings) {
+                    if !decodedData.isEmpty && !decodedDataString.isEmpty {
                         followedStocks = decodedData
                         print("Hentet lagrede Aksjer2")
+                        followedStocksStrings = decodedDataString
+                        print("Hentet lagrede Aksje strings2")
                     } else {
                         print("wtf idk man2")
                     }
+                    
                 } else {
                     print("Error: Kunne ikke hente lagrede Aksjer2!")
                     print("Du er doomed!")
+                    
+                    if let encodedData = try? JSONEncoder().encode(defaultfollowedStocks), let encodedDataString = try? JSONEncoder().encode(defualtfollowedStocksStrings) {
+                        followedStocksArray = encodedData
+                        followedStocksArrayStrings = encodedDataString
+                        if let storedData = followedStocksArray, let storedDataString = followedStocksArrayStrings {
+                            if let decodedData = try? JSONDecoder().decode([SearchResults].self, from: storedData), let decodedDataString = try? JSONDecoder().decode([String].self, from: storedDataString) {
+                                if !decodedData.isEmpty && !decodedDataString.isEmpty {
+                                    followedStocks = decodedData
+                                    print("Error! Henter defaut!")
+                                    followedStocksStrings = decodedDataString
+                                    print("Error! Henter default Strings!")
+                                }
+                                
+                            } else {
+                                print("Error: Kunne ikke hente stadard Aksjer2")
+                                print("Error: Kunne ikke hente stadard Aksje strings2")
+                            }
+                        }
+                        
+                    } else {
+                        print("Error: Kunne ikke hente stadard Aksjer for å lagre de")
+                        
+                        print("Du er doomed2!")
+                    }
+                    
+                    
+                    
+                    
+                    
                 }
             }
             
+            
         } else {
-            if let encodedData = try? JSONEncoder().encode(defaultfollowedStocks) {
+            if let encodedData = try? JSONEncoder().encode(defaultfollowedStocks), let encodedDataString = try? JSONEncoder().encode(defualtfollowedStocksStrings) {
                 followedStocksArray = encodedData
-                if let storedData = followedStocksArray {
-                    if let decodedData = try? JSONDecoder().decode([SearchResults].self, from: storedData) {
-                        if !decodedData.isEmpty {
+                followedStocksArrayStrings = encodedDataString
+                if let storedData = followedStocksArray, let storedDataString = followedStocksArrayStrings {
+                    if let decodedData = try? JSONDecoder().decode([SearchResults].self, from: storedData), let decodedDataString = try? JSONDecoder().decode([String].self, from: storedDataString) {
+                        if !decodedData.isEmpty && !decodedDataString.isEmpty {
                             followedStocks = decodedData
-                            print("Ny Aksje bruker uten lagrede Aksjer")
+                            print("Ny bruker, Henter standard aksjer!")
+                            followedStocksStrings = decodedDataString
+                            print("Ny bruker, Henter standard aksjeString")
                         }
+                        
                     } else {
-                        print("Error: Kunne ikke hente stadard Aksjer")
+                        print("Error: Kunne ikke hente stadard Aksjer3")
+                        print("Error: Kunne ikke hente stadard Aksje strings3")
                     }
-                    
                 }
+                
             } else {
-                print("Error: Kunne ikke hente stadard Aksjer for å lagre de")
-            }
-        }
-        
-        
-        if let storedData = followedStocksArrayStrings {
-            if let decodedData = try? JSONDecoder().decode([String].self, from: storedData) {
-                if !decodedData.isEmpty {
-                    followedStocksStrings = decodedData
-                    print("Hentet lagrede Aksje strings")
-                }
-            } else {
-//                followedStocksStrings = defualtfollowedStocksStrings
-                print("Error: Kunne ikke hente lagrede Aksje strings!")
-                if let decodedData = try? JSONDecoder().decode([String].self, from: storedData) {
-                    if !decodedData.isEmpty {
-                        followedStocksStrings = decodedData
-                        print("Hentet lagrede Aksje strings2")
-                    }
-                } else {
-                    print("Error: Kunne ikke hente lagrede Aksje strings2!")
-                    print("Du er doomed2!")
-                }
-            }
-            
-        } else {
-            if let encodedData = try? JSONEncoder().encode(defualtfollowedStocksStrings) {
-                followedStocksArrayStrings = encodedData
-                if let storedData = followedStocksArrayStrings {
-                    if let decodedData = try? JSONDecoder().decode([String].self, from: storedData) {
-                        if !decodedData.isEmpty {
-                            followedStocksStrings = decodedData
-                            print("Ny Aksje bruker uten lagrede Aksje strings2")
-                        }
-                    } else {
-                        print("Error: Kunne ikke hente stadard Aksje strings")
-                    }
-                    
-                }
-            } else {
-                print("Error: Kunne ikke hente stadard Aksjer for å lagre de")
+                print("Error: Kunne ikke hente stadard Aksjer for å lagre de3")
+                
+                print("Du er doomed3!")
             }
             
         }

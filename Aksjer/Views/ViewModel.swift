@@ -7,7 +7,6 @@
 
 import SwiftUI
 import Charts
-import Foundation
 
 class ViewModel: ObservableObject {
     
@@ -302,7 +301,7 @@ class ViewModel: ObservableObject {
                     
                     let quote = result.chart.result[0].indicators.quote[0]
                     let timestamps = result.chart.result[0].timestamp
-                    
+                    print("Klar for for-loop")
                     for i in 0..<quote.close.count {
                         let close = quote.close[i]
                         
@@ -331,11 +330,11 @@ class ViewModel: ObservableObject {
                             print("feil data")
                         }
                     }
-                    print("jeg er her1")
+                    print("Ferdig med for-loop")
                     
                     
-                    DispatchQueue.main.asyncAfter(deadline: .now()+0.0000000000000000001) {
-                        
+                    DispatchQueue.main.asyncAfter(deadline: .now()+0.00001) {
+                        print("jeg er inni delay")
                         
                         if let encodedData = try? JSONEncoder().encode(self.recivedStock) {
                             self.storedRecivedStock = encodedData
@@ -407,16 +406,18 @@ class ViewModel: ObservableObject {
                         self.shouldShowError = false
                         
                         DispatchQueue.main.asyncAfter(deadline: .now()+0.1) {
+                            print("jeg er inni delay2")
                             self.isLoadingFirst = false
                             self.isLoadingOther = false
                             self.isRefreshing = false
                             print("nå skal alt være bra2!")
                         }
+                        print("jeg er ferdig med delay2")
                         
                         
                     }
                     
-                    
+                    print("jeg er ferdig med delay")
                     
                     
                 case .failure(let error):
@@ -1169,10 +1170,13 @@ class ViewModel: ObservableObject {
                     if let decodedData = try? JSONDecoder().decode([NewsItems].self, from: self.storedStockNews) {
                         DispatchQueue.main.async {
                             self.StockNews = decodedData
+                            self.isShowingNewsArray = Array(repeating: false, count: self.StockNews.count)
+                            print("Hentet lagret Stock: \(self.StockNews)")
                         }
-                        self.isShowingNewsArray = Array(repeating: false, count: self.StockNews.count)
-                        print("Hentet lagret Stock: \(self.StockNews)")
                         
+                        
+                    } else {
+                        self.StockNews.removeAll()
                     }
             }
         })
@@ -1475,7 +1479,7 @@ class ViewModel: ObservableObject {
     }
     
     func updateNumbers() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.23) {
             withAnimation {
                 if let lastClose = self.StockArray.last?.close {
                     let _ = print("lastClose: \(lastClose)")
@@ -1521,10 +1525,10 @@ class ViewModel: ObservableObject {
     }
     
     func updateCloseNumbers() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.23) {
             withAnimation {
                 if let lastClose = self.StockArray.last?.close {
-                    print("lastClose: \(lastClose)")
+                    print("lastClose2: \(lastClose)")
                     self.lastClose = lastClose
                     
                 } else {
@@ -1536,7 +1540,7 @@ class ViewModel: ObservableObject {
                 
                 
                 if let firstClose = self.StockArray.first?.close {
-                    print("firstClose: \(firstClose)")
+                    print("firstClose2: \(firstClose)")
                     self.firstClose = firstClose
                     
                 } else {
@@ -1571,89 +1575,7 @@ class ViewModel: ObservableObject {
         }
         
     }
-    
-//    func calculateRSI(closingPrices: [Double], period: Int = 14) -> [Double] {
-//        guard closingPrices.count > period else { return [] }
-//        
-//        var gains: [Double] = []
-//        var losses: [Double] = []
-//        
-//        // Calculate gains and losses
-//        for i in 1..<closingPrices.count {
-//            let delta = closingPrices[i] - closingPrices[i - 1]
-//            if delta > 0 {
-//                gains.append(delta)
-//            } else {
-//                losses.append(abs(delta))
-//            }
-//        }
-//        
-//        // Calculate average gains and losses
-//        let averageGain = gains.prefix(period).reduce(0, +) / Double(period)
-//        let averageLoss = losses.prefix(period).reduce(0, +) / Double(period)
-//        
-//        
-//        // Calculate Relative Strength (RS)
-//        let relativeStrength = averageGain / averageLoss
-//        
-//        // Calculate RSI
-//        let rsi = 100 - (100 / (1 + relativeStrength))
-//        
-//        return [rsi]
-//    }
 
-    
-//    func calculateRSI(prices: [Double], period: Int) -> [Double] {
-//        var upSum = 0.0
-//        var downSum = 0.0
-//        var previousPrice = 0.0
-//        var rsiValues = [Double]()
-//        
-//        for (index, price) in prices.enumerated() {
-//            if index == 0 {
-//                previousPrice = price
-//                continue
-//            }
-//            
-//            let priceChange = price - previousPrice
-//            previousPrice = price
-//            
-//            if priceChange > 0 {
-//                upSum += priceChange
-//            } else if priceChange < 0 {
-//                downSum += abs(priceChange)
-//            }
-//            
-//            print("rsiPriceChange: \(priceChange)")
-//            if index >= period {
-//                let rs: Double
-//                if downSum == 0 {
-//                    rs = 100
-//                } else {
-//                    rs = (upSum / Double(period)) / (downSum / Double(period))
-//                }
-//                print("rsiUpSum: \(upSum)")
-//                print("rsiDownSum: \(downSum)")
-//                print("rsiRS: \(rs)")
-//                let rsi = 100 - (100 / (1 + rs))
-//                print("rsiValue: \(rsi)")
-//                rsiValues.append(rsi)
-//                
-//                if index < prices.count - 1 {
-//                    let removedPriceChange = prices[index - period + 1] - prices[index - period]
-//                    print("RSIremovedPriceChange: \(removedPriceChange)")
-//                    if removedPriceChange > 0 {
-//                        upSum -= removedPriceChange
-//                    } else if removedPriceChange < 0 {
-//                        downSum -= abs(removedPriceChange)
-//                    }
-//                }
-//            }
-//        }
-//        
-//        return rsiValues
-//    }
-    
     func computeRSI(on prices: [Double], periods: Int = 14, minimumPoints: Int = 200) -> [Double] {
         precondition(periods > 1 && minimumPoints > periods && prices.count >= minimumPoints)
         

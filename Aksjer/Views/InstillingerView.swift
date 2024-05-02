@@ -10,9 +10,9 @@ import Charts
 
 
 enum InterpolationMethod: String, CaseIterable, Identifiable {
-    case cardinal
     case linear
-    
+    case cardinal
+        
     var id: String {
         switch self {
             case .linear:
@@ -614,83 +614,83 @@ struct PiriodView: View {
         
     }
 }
-
-struct GeneralView: View {
-    @AppStorage("appTheme") private var appTheme: AppTheme = .dark
-    @AppStorage("selectedInterpolationMethod") private var selectedInterpolationMethod: InterpolationMethod = .cardinal
-    @State var paddingValue: CGFloat = 0.00
-    var body: some View {
-        GeometryReader { geometry in
-            List {
-                VStack(alignment: .leading) {
-                    Text("App Tema:")
-                        .padding(.leading, 3)
-                        .font(.headline.bold())
-                    
-                    Picker("App Theme", selection: $appTheme) {
-                        Text("System").tag(AppTheme.system)
-                        Text("Mørkt").tag(AppTheme.dark)
-                        Text("Lyst").tag(AppTheme.light)
-                        
-                        
-                    }
-                    .pickerStyle(SegmentedPickerStyle())
-                    
-                    
-                }
-                
-                VStack(alignment: .leading) {
-                    Text("Graf Utsende:")
-                        .padding(.leading, 3)
-                        .font(.headline.bold())
-                    
-                    Picker("Graf utsende", selection: $selectedInterpolationMethod) {
-                        ForEach(InterpolationMethod.allCases, id: \.self) { item in
-                            Text("\(item.id)")
-                                .font(.callout.bold())
-                        }
-                    }
-                    .pickerStyle(SegmentedPickerStyle())
-                    
-                    
-                }
-            }
-            .navigationTitle("Generelt")
-            .navigationBarTitleDisplayMode(.inline)
-            .padding([.leading, .trailing], paddingValue)
-            .onChange(of: UIDevice.current.orientation) {
-                if UIDevice.current.userInterfaceIdiom == .pad && UIDevice.current.orientation.isPortrait {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.0000000000000000000000000000000000000000000001) {
-                        paddingValue = geometry.size.width/10
-                        print("padding1: \(paddingValue)")
-                        
-                    }
-                } else if UIDevice.current.userInterfaceIdiom == .pad && UIDevice.current.orientation.isLandscape {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.0000000000000000000000000000000000000000000001) {
-                        paddingValue = geometry.size.width/7
-                        print("padding2: \(paddingValue)")
-                        
-                    }
-                }
-                
-            }
-            .onAppear {
-                
-                if UIDevice.current.userInterfaceIdiom == .pad && UIDevice.current.orientation.isPortrait {
-                    paddingValue = geometry.size.width/10
-                    print("padding3: \(paddingValue)")
-                    
-                } else if UIDevice.current.userInterfaceIdiom == .pad && UIDevice.current.orientation.isLandscape {
-                    paddingValue = geometry.size.width/8
-                    print("padding4: \(paddingValue)")
-                    
-                }
-            }
-            
-            
-        }
-    }
-}
+//
+//struct GeneralView: View {
+//    @AppStorage("appTheme") private var appTheme: AppTheme = .dark
+//    @AppStorage("selectedInterpolationMethod") private var selectedInterpolationMethod: InterpolationMethod = .linear
+//    @State var paddingValue: CGFloat = 0.00
+//    var body: some View {
+//        GeometryReader { geometry in
+//            List {
+//                VStack(alignment: .leading) {
+//                    Text("App Tema:")
+//                        .padding(.leading, 3)
+//                        .font(.headline.bold())
+//                    
+//                    Picker("App Theme", selection: $appTheme) {
+//                        Text("System").tag(AppTheme.system)
+//                        Text("Mørkt").tag(AppTheme.dark)
+//                        Text("Lyst").tag(AppTheme.light)
+//                        
+//                        
+//                    }
+//                    .pickerStyle(SegmentedPickerStyle())
+//                    
+//                    
+//                }
+//                
+//                VStack(alignment: .leading) {
+//                    Text("Graf Utsende:")
+//                        .padding(.leading, 3)
+//                        .font(.headline.bold())
+//                    
+//                    Picker("Graf utsende", selection: $selectedInterpolationMethod) {
+//                        ForEach(InterpolationMethod.allCases, id: \.self) { item in
+//                            Text("\(item.id)")
+//                                .font(.callout.bold())
+//                        }
+//                    }
+//                    .pickerStyle(SegmentedPickerStyle())
+//                    
+//                    
+//                }
+//            }
+//            .navigationTitle("Generelt")
+//            .navigationBarTitleDisplayMode(.inline)
+//            .padding([.leading, .trailing], paddingValue)
+//            .onChange(of: UIDevice.current.orientation) {
+//                if UIDevice.current.userInterfaceIdiom == .pad && UIDevice.current.orientation.isPortrait {
+//                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.0000000000000000000000000000000000000000000001) {
+//                        paddingValue = geometry.size.width/10
+//                        print("padding1: \(paddingValue)")
+//                        
+//                    }
+//                } else if UIDevice.current.userInterfaceIdiom == .pad && UIDevice.current.orientation.isLandscape {
+//                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.0000000000000000000000000000000000000000000001) {
+//                        paddingValue = geometry.size.width/7
+//                        print("padding2: \(paddingValue)")
+//                        
+//                    }
+//                }
+//                
+//            }
+//            .onAppear {
+//                
+//                if UIDevice.current.userInterfaceIdiom == .pad && UIDevice.current.orientation.isPortrait {
+//                    paddingValue = geometry.size.width/10
+//                    print("padding3: \(paddingValue)")
+//                    
+//                } else if UIDevice.current.userInterfaceIdiom == .pad && UIDevice.current.orientation.isLandscape {
+//                    paddingValue = geometry.size.width/8
+//                    print("padding4: \(paddingValue)")
+//                    
+//                }
+//            }
+//            
+//            
+//        }
+//    }
+//}
 
 struct MultiSelector<LabelView: View>: View {
     let label: LabelView

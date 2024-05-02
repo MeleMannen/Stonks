@@ -11,7 +11,7 @@ import Charts
 
 struct FollowedStockView: View {
     @AppStorage("defaultRange") private var defaultRange: RangeType = .oneDay
-    @AppStorage("selectedInterpolationMethod") private var selectedInterpolationMethod: InterpolationMethod = .cardinal
+    @AppStorage("selectedInterpolationMethod") private var selectedInterpolationMethod: InterpolationMethod = .linear
     @ObservedObject var vm: ViewModel
     
     
@@ -309,10 +309,12 @@ struct FollowedStockView: View {
                                                         .font(.title3)
                                                         .textSelection(.enabled)
                                                     Spacer(minLength: 50)
+                                                        
                                                     TextAnimations3(number: vm.firstClose)
                                                         .foregroundStyle(LinearGradient(colors: [.teal, .indigo], startPoint: .topLeading, endPoint: .bottomTrailing))
                                                         .font(.title2)
                                                         .textSelection(.enabled)
+                                                        
                                                     
                                                     
                                                 }
@@ -722,6 +724,7 @@ struct FollowedStockView: View {
             
             .task {
                 if !vm.isViewLoaded2 {
+                    vm.getStockNews()
                     await vm.getNewStockChartAsync()
                     vm.isViewLoaded2 = true
                     
@@ -730,7 +733,7 @@ struct FollowedStockView: View {
             
             .task {
                 if !vm.isViewLoaded3 {
-                    vm.getStockNews()
+                    
                     vm.isViewLoaded3 = true
                     print("Ferdig hentet nyheter!")
                     
@@ -1465,6 +1468,8 @@ fileprivate struct DelaysTouchesButtonStyle: ButtonStyle {
         }
     }
 }
+
+
 
 
 struct FollowedStockView_Previews: PreviewProvider {
