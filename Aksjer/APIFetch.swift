@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import Observation
 
 
 struct Stock: Decodable, Encodable {
@@ -101,6 +102,91 @@ struct StockData: Decodable, Comparable, Identifiable, Encodable {
     
     private enum CodingKeys : String, CodingKey { case adjclose, close, date, date_utc, high, low, open, volume }
 }
+
+
+struct OptionChainResponse: Codable {
+    let optionChain: OptionChain
+}
+
+struct OptionChain: Codable {
+    let result: [OptionChainResult]
+    let error: String?
+}
+
+struct OptionChainResult: Codable {
+    let underlyingSymbol: String
+    let quote: OptionQuote
+}
+
+struct OptionQuote: Codable {
+    let language: String
+    let region: String
+    let quoteType: String
+    let triggerable: Bool
+    let currency: String
+    let marketState: String
+    let exchangeDataDelayedBy: Int
+    let esgPopulated: Bool
+    let tradeable: Bool
+    let epsCurrentYear: Double
+    let priceEpsCurrentYear: Double
+    let sharesOutstanding: Int
+    let bookValue: Double
+    let fiftyDayAverage: Double
+    let fiftyDayAverageChange: Double
+    let fiftyDayAverageChangePercent: Double
+    let regularMarketChangePercent: Double
+    let regularMarketDayRange: String
+    let regularMarketPreviousClose: Double
+    let bid: Double
+    let ask: Double
+    let bidSize: Int
+    let askSize: Int
+    let messageBoardId: String
+    let fullExchangeName: String
+    let longName: String
+    let earningsTimestampEnd: Int
+    let trailingAnnualDividendRate: Double
+    let trailingPE: Double
+    let trailingAnnualDividendYield: Double
+    let epsTrailingTwelveMonths: Double
+    let epsForward: Double
+    let regularMarketPrice: Double
+    let regularMarketTime: Int
+    let regularMarketChange: Double
+    let regularMarketOpen: Double
+    let regularMarketDayHigh: Double
+    let regularMarketDayLow: Double
+    let regularMarketVolume: Int
+    let priceHint: Int
+    let twoHundredDayAverage: Double
+    let twoHundredDayAverageChange: Double
+    let twoHundredDayAverageChangePercent: Double
+    let marketCap: Int
+    let forwardPE: Double
+    let priceToBook: Double
+    let sourceInterval: Int
+    let exchangeTimezoneName: String
+    let exchangeTimezoneShortName: String
+    let gmtOffSetMilliseconds: Int
+    let exchange: String
+    let shortName: String
+    let market: String
+    let financialCurrency: String
+    let averageDailyVolume3Month: Int
+    let averageDailyVolume10Day: Int
+    let fiftyTwoWeekLowChange: Double
+    let fiftyTwoWeekLowChangePercent: Double
+    let fiftyTwoWeekRange: String
+    let fiftyTwoWeekHighChange: Double
+    let fiftyTwoWeekHighChangePercent: Double
+    let fiftyTwoWeekLow: Double
+    let fiftyTwoWeekHigh: Double
+    let earningsTimestamp: Int
+    let earningsTimestampStart: Int
+    let symbol: String
+}
+
 
 
 
@@ -816,6 +902,76 @@ extension APIFetch {
             }
         }
     }
+    
+    /// A function that fetches the latest Stock Options for a given stock
+    /// - Parameters:
+    ///   - symbol: The stock symbol
+    ///   - completion: A completion handler
+    func fetchStockOptions(symbol: String, completion: @escaping (Result<OptionChainResponse, Error>) -> Void) {
+        
+        let request = NSMutableURLRequest(url: NSURL(string: "https://query1.finance.yahoo.com/v6/finance/options/\(symbol)?cromb=.tnO1kJnWyn")! as URL,
+                                          cachePolicy: .useProtocolCachePolicy,
+                                          timeoutInterval: 20.0)
+        request.httpMethod = "GET"
+        
+        let session = URLSession.shared
+        session.configuration.timeoutIntervalForResource = 120
+        session.configuration.timeoutIntervalForRequest = 120
+        let dataTask = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) -> Void in
+            if let error = error {
+                completion(.failure(error))
+                print(error)
+                print("noooo2121212")
+                return
+            }
+            let httpResponse = response as? HTTPURLResponse
+            print("Response: \(String(describing: httpResponse))")
+            
+            guard let data = data else {
+                completion(.failure(APIError.noData))
+                print("noooooooooooo")
+                return
+            }
+            
+            var stockOptions: OptionChainResponse?
+            
+            do {
+                let jsonObject = try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions.mutableContainers)
+                if let jsonDict = jsonObject as? NSDictionary {
+                    print ("Dict: \(jsonDict)")
+                }
+                stockOptions = try JSONDecoder().decode(OptionChainResponse.self, from: data)
+                guard let stockOptions2 = stockOptions else {
+                    print("failed to parse")
+                    return
+                }
+                
+                
+                completion(.success(stockOptions2))
+                print("yay!! Successfully parsed the json data!")
+                
+                
+            } catch {
+                completion(.failure(error))
+                print("error: \(error)")
+                print("why! no!!")
+            }
+            
+            
+            
+        })
+        
+        dataTask.resume()
+    }
+    
+//    func fetchStockOptions(symbol: String, interval: String, range: String) async -> (Result<OptionChainResponse, Error>) {
+//        await withCheckedContinuation { continuation in
+//            fetchStockOptions(symbol: symbol) { data in
+//                continuation.resume(returning: data)
+//                print("ok da but why")
+//            }
+//        }
+//    }
     
     
     

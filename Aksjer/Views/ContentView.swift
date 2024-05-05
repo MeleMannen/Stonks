@@ -9,13 +9,12 @@ import SwiftUI
 
 struct ContentView: View {
     @AppStorage("appTheme") private var appTheme: AppTheme = .dark
-    @State private var selection: Tab = .featured
-    
+    @State private var selection: Tab = .stocks
     
     
     enum Tab {
-        case featured
-        case list
+        case stocks
+        case settings
     }
     
     init() {
@@ -39,7 +38,7 @@ struct ContentView: View {
                 .tabItem {
                     Label("Aksjer", systemImage: "chart.line.uptrend.xyaxis")
                 }
-                .tag(Tab.featured)
+                .tag(Tab.stocks)
                 
             
             
@@ -49,7 +48,7 @@ struct ContentView: View {
                 .tabItem {
                     Label("Innstillinger", systemImage: "gear")
                 }
-                .tag(Tab.list)
+                .tag(Tab.settings)
                 .preferredColorScheme(appTheme == .system ? nil : (appTheme == .light ? .light : .dark))
         }
         

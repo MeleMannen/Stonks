@@ -18,6 +18,7 @@ class ViewModel: ObservableObject {
     @Published var StockArraySnitt: [StockData] = []
     @Published var StockRSI: [StockData] = []
     @Published var StockNews: [NewsItems] = []
+    @Published var StockOptions: [OptionChainResult] = []
     @Published var RSIValues: [(Int, Double)] = []
     
     @AppStorage var storedRecivedStock: Data
@@ -27,8 +28,9 @@ class ViewModel: ObservableObject {
     @AppStorage var StoredStockArrayRSI: Data
     @AppStorage var storedStockNews: Data
     @AppStorage var storedLastNewsCheck: Data
-    @Published var isShowingOldData = false
+    @AppStorage var storedStockOptions: Data
     
+    @Published var isShowingOldData = false
     @Published var isUp = true
     @Published var minValue: Float = 1
     @Published var maxValue: Float = 500
@@ -78,8 +80,8 @@ class ViewModel: ObservableObject {
     
     @Published var number1: Float = 0.00
     @Published var number2: Float = 0.00
-    @Published var firstClose: Float = 0.00
-    @Published var lastClose: Float = 0.00
+    @Published var number3: Float = 0.00
+    @Published var openOptions: Float = 0.00
     
     @Published var change: Float = 0
     
@@ -255,6 +257,7 @@ class ViewModel: ObservableObject {
         self._StoredStockArrayRSI = AppStorage(wrappedValue: Data(), "StoredStockArrayRSIFor: \(stock.symbol), \(selectedRange)")
         self._storedStockNews = AppStorage(wrappedValue: Data(), "StoredStockNewsFor: \(stock.symbol)")
         self._storedLastNewsCheck = AppStorage(wrappedValue: Data(), "StoredLastNewsCheck: \(stock.symbol)")
+        self._storedStockOptions = AppStorage(wrappedValue: Data(), "StoredStockOptionsFor: \(stock.symbol)")
         self.stock = stock
         self.recivedStock = recivedStock
         self.StockArray = StockArray
@@ -286,6 +289,7 @@ class ViewModel: ObservableObject {
             self._StoredStockArray = AppStorage(wrappedValue: Data(), "StoredStockArrayFor: \(stock.symbol), \(selectedRange)")
             self._StoredStockArray2 = AppStorage(wrappedValue: Data(), "StoredStockArray2For: \(stock.symbol), \(selectedRange)")
             self._storedStockNews = AppStorage(wrappedValue: Data(), "StoredStockNewsFor: \(stock.symbol)")
+            self._storedStockOptions = AppStorage(wrappedValue: Data(), "StoredStockOptionsFor: \(stock.symbol)")
             print("but i am here now")
             let stock = await APIFetch.shared.fetchStockData2(symbol: "\(stock.symbol)", interval: selectedRange.realInterval, range: selectedRange.realRange)
             print("okda jeg er her nå!")
@@ -530,6 +534,55 @@ class ViewModel: ObservableObject {
         } else {
             print("False!!")
         }
+    }
+    
+    
+    func getStockOptions() {
+        print("fetching stock options")
+        self._storedStockOptions = AppStorage(wrappedValue: Data(), "StoredStockOptionsFor: \(stock.symbol)")
+        APIFetch.shared.fetchStockOptions(symbol: stock.symbol, completion: { options in
+            switch options {
+                case .success(let result):
+                    DispatchQueue.main.async {
+                        self.StockOptions = result.optionChain.result
+                        print("moving forward")
+                        print("StockOptions: \(self.StockOptions)")
+                        
+                        
+                    }
+                    DispatchQueue.main.asyncAfter(deadline: .now()+0.0001) {
+                        if let encodedData = try? JSONEncoder().encode(self.StockOptions) {
+                            self.storedStockOptions = encodedData
+                            
+                        } else {
+                            print("Error: Kunne ikke lagre StockOptions")
+                        }
+                        
+                        print("nå er jeg ferdig med StockOptions")
+                    }
+                    
+                    
+                    
+                    
+                    
+                case .failure(let error):
+                    print("error: \(error)")
+                    if let decodedData = try? JSONDecoder().decode([OptionChainResult].self, from: self.storedStockOptions) {
+                        DispatchQueue.main.async {
+                            self.StockOptions = decodedData
+                            print("Hentet lagret Stock Options: \(self.StockOptions)")
+                        }
+                        
+                        
+                    } else {
+                        self.StockOptions.removeAll()
+                    }
+            }
+        })
+        
+        
+        
+        
     }
     
     func getNewStockSnitt(days: Int) {
@@ -1520,35 +1573,6 @@ class ViewModel: ObservableObject {
                         
                     }
                 }
-            }
-        }
-    }
-    
-    func updateCloseNumbers() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.23) {
-            withAnimation {
-                if let lastClose = self.StockArray.last?.close {
-                    print("lastClose2: \(lastClose)")
-                    self.lastClose = lastClose
-                    
-                } else {
-                    let _ = print("StockArray5: \(self.StockArray)")
-                    self.lastClose = 0.00
-                    
-                }
-                
-                
-                
-                if let firstClose = self.StockArray.first?.close {
-                    print("firstClose2: \(firstClose)")
-                    self.firstClose = firstClose
-                    
-                } else {
-                    let _ = print("StockArray7: \(self.StockArray)")
-                    self.firstClose = 0.00
-                    
-                    
-                }
                 
             }
         }
@@ -2300,6 +2324,28 @@ class ViewModel: ObservableObject {
     var chartYAxis: some AxisContent {
         AxisMarks(preset: .extended, values: self.yAxisArray) { value in
             if let y = value.as(Double.self) {
+                if y > self.testChart.yAxisData.axisStart && y <= self.testChart.yAxisData.axisEnd {
+                    AxisGridLine(stroke: .init(lineWidth: 0.3))
+                    AxisTick(stroke: .init(lineWidth: 0.3))
+                    AxisValueLabel(anchor: .topLeading, collisionResolution: .greedy) {
+                        Text("\(y.roundedString)")
+                            .foregroundColor(Color(uiColor: .label))
+                            .font(.caption.bold())
+                            .frame(width: 55)
+                    }
+                } else if Float(y) == Float(self.testChart.yAxisData.axisStart) {
+                    AxisGridLine(stroke: .init(lineWidth: 1))
+                        .foregroundStyle(.gray)
+                    AxisTick(stroke: .init(lineWidth: 1))
+                        .foregroundStyle(.gray)
+                }
+            }
+        }
+    }
+    
+    var chartYAxis2: some AxisContent {
+        AxisMarks(preset: .extended, values: self.yAxisArray) { value in
+            if let y = value.as(Double.self) {
                 AxisGridLine(stroke: .init(lineWidth: 0.3))
                 AxisTick(stroke: .init(lineWidth: 0.3))
                 AxisValueLabel(anchor: .topLeading, collisionResolution: .greedy) {
@@ -2315,7 +2361,7 @@ class ViewModel: ObservableObject {
     var chartYAxisRSI: some AxisContent {
         AxisMarks(preset: .extended, values: self.yAxisArrayRSI) { value in
             if let y = value.as(Double.self) {
-                if y >= self.rsiChart.yAxisData.axisStart && y <= self.rsiChart.yAxisData.axisEnd {
+                if y > self.rsiChart.yAxisData.axisStart && y <= self.rsiChart.yAxisData.axisEnd {
                     AxisGridLine(stroke: .init(lineWidth: 0.3))
                     AxisTick(stroke: .init(lineWidth: 0.3))
                     AxisValueLabel(anchor: .topLeading, collisionResolution: .greedy) {
@@ -2324,6 +2370,11 @@ class ViewModel: ObservableObject {
                             .font(.caption.bold())
                             .frame(width: 55)
                     }
+                } else if y == self.rsiChart.yAxisData.axisStart {
+                    AxisGridLine(stroke: .init(lineWidth: 1))
+                        .foregroundStyle(.gray)
+                    AxisTick(stroke: .init(lineWidth: 1))
+                        .foregroundStyle(.gray)
                 }
             }
         }
@@ -3173,6 +3224,7 @@ class ViewModel: ObservableObject {
         if let float = Float(highest.roundedString) {
             self.yAxisArray.append(float)
         }
+        self.yAxisArray.append(Float(lowest - 0.01))
         
         var current = lowest
         (0..<Int(numberOfLines) - 1).forEach { i in

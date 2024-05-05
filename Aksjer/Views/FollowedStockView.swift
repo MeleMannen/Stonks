@@ -95,8 +95,6 @@ struct FollowedStockView: View {
                                                     .foregroundStyle(vm.isUp ? .green : .red)
                                                 
                                                 
-                                                
-                                                
                                             }
                                             .onAppear {
                                                 vm.updateNumbers()
@@ -309,53 +307,32 @@ struct FollowedStockView: View {
                                                         .font(.title3)
                                                         .textSelection(.enabled)
                                                     Spacer(minLength: 50)
-                                                        
-                                                    TextAnimations3(number: vm.firstClose)
-                                                        .foregroundStyle(LinearGradient(colors: [.teal, .indigo], startPoint: .topLeading, endPoint: .bottomTrailing))
-                                                        .font(.title2)
-                                                        .textSelection(.enabled)
-                                                        
                                                     
-                                                    
+                                                    if let firstClose = vm.StockOptions.first?.quote.regularMarketOpen {
+                                                        let open = Float(firstClose)
+                                                        Text(String(format: "%.2f", open).replacingOccurrences(of: ".", with: ","))
+                                                            .foregroundStyle(LinearGradient(colors: [.teal, .indigo], startPoint: .topLeading, endPoint: .bottomTrailing))
+                                                            .font(.title2)
+                                                            .textSelection(.enabled)
+                                                        
+                                                    } else if let firstClose = vm.StockArray.first?.close {
+                                                        Text(String(format: "%.2f", firstClose).replacingOccurrences(of: ".", with: ","))
+                                                            .foregroundStyle(LinearGradient(colors: [.teal, .indigo], startPoint: .topLeading, endPoint: .bottomTrailing))
+                                                            .font(.title2)
+                                                            .textSelection(.enabled)
+                                                        
+                                                    } else {
+                                                        Text(String(format: "%.2f", 0).replacingOccurrences(of: ".", with: ","))
+                                                            .foregroundStyle(LinearGradient(colors: [.teal, .indigo], startPoint: .topLeading, endPoint: .bottomTrailing))
+                                                            .font(.title2)
+                                                            .textSelection(.enabled)
+                                                        
+                                                        
+                                                    }
+                                                        
                                                 }
-                                                .padding(EdgeInsets(top: 10, leading: 4, bottom: 10, trailing: 4))
+                                                .padding(EdgeInsets(top: 10, leading: 4, bottom: 5, trailing: 4))
                                                 
-                                                HStack {
-                                                    Text("Stenging:")
-                                                        .font(.title3)
-                                                        .textSelection(.enabled)
-                                                    Spacer(minLength: 50)
-                                                    TextAnimations3(number: vm.lastClose)
-                                                        .foregroundStyle(LinearGradient(colors: [.teal, .indigo], startPoint: .topLeading, endPoint: .bottomTrailing))
-                                                        .font(.title2)
-                                                        .textSelection(.enabled)
-                                                }
-                                                .padding(EdgeInsets(top: 10, leading: 4, bottom: 10, trailing: 4))
-                                                
-                                            }
-                                            .onAppear {
-                                                vm.updateCloseNumbers()
-                                                
-                                            }
-                                            .onChange(of: vm.isRefreshing) {
-                                                vm.updateCloseNumbers()
-                                                
-                                            }
-                                            
-                                            .onChange(of: vm.isLoadingOther) {
-//                                                if !vm.isLoadingOther {
-                                                    vm.updateCloseNumbers()
-//                                                }
-                                                
-                                                
-                                            }
-                                            
-                                            
-                                            
-                                            
-                                            Divider()
-                                            
-                                            VStack(alignment: .leading) {
                                                 HStack {
                                                     Text("Høyest:")
                                                         .font(.title3)
@@ -366,7 +343,7 @@ struct FollowedStockView: View {
                                                         .font(.title2)
                                                         .textSelection(.enabled)
                                                 }
-                                                .padding(EdgeInsets(top: 10, leading: 4, bottom: 10, trailing: 4))
+                                                .padding(EdgeInsets(top: 5, leading: 4, bottom: 5, trailing: 4))
                                                 
                                                 HStack {
                                                     Text("Lavest:")
@@ -378,29 +355,175 @@ struct FollowedStockView: View {
                                                         .font(.title2)
                                                         .textSelection(.enabled)
                                                 }
-                                                .padding(EdgeInsets(top: 10, leading: 4, bottom: 10, trailing: 4))
-                                                
-                                                
+                                                .padding(EdgeInsets(top: 5, leading: 4, bottom: 10, trailing: 4))
                                             }
                                             
                                             
                                             Divider()
                                             
                                             VStack(alignment: .leading) {
-                                                let combinedVolume = vm.StockArray.map(\.volume).reduce(0, +)
-                                                let formattedVolume = vm.formatLargeNumber(combinedVolume)
-                                                HStack {
-                                                    Text("Volum:")
-                                                        .font(.title3)
-                                                        .textSelection(.enabled)
-                                                    Spacer(minLength: 50)
-                                                    Text("\(formattedVolume)")
-                                                        .foregroundStyle(LinearGradient(colors: [.teal, .indigo], startPoint: .topLeading, endPoint: .bottomTrailing))
-                                                        .font(.title2)
-                                                        .textSelection(.enabled)
+                                                if let volume = vm.StockOptions.first?.quote.regularMarketVolume {
+                                                    let formattedVolume = vm.formatLargeNumber(volume)
+                                                    HStack {
+                                                        Text("Volum:")
+                                                            .font(.title3)
+                                                            .textSelection(.enabled)
+                                                        Spacer(minLength: 50)
+                                                        Text("\(formattedVolume)")
+                                                            .foregroundStyle(LinearGradient(colors: [.teal, .indigo], startPoint: .topLeading, endPoint: .bottomTrailing))
+                                                            .font(.title2)
+                                                            .textSelection(.enabled)
+                                                    }
+                                                    .padding(EdgeInsets(top: 10, leading: 4, bottom: 5, trailing: 4))
+                                                } else {
+                                                    let combinedVolume = vm.StockArray.map(\.volume).reduce(0, +)
+                                                    let formattedVolume = vm.formatLargeNumber(combinedVolume)
+                                                    HStack {
+                                                        Text("Volum:")
+                                                            .font(.title3)
+                                                            .textSelection(.enabled)
+                                                        Spacer(minLength: 50)
+                                                        Text("\(formattedVolume)")
+                                                            .foregroundStyle(LinearGradient(colors: [.teal, .indigo], startPoint: .topLeading, endPoint: .bottomTrailing))
+                                                            .font(.title2)
+                                                            .textSelection(.enabled)
+                                                    }
+                                                    .padding(EdgeInsets(top: 10, leading: 4, bottom: 5, trailing: 4))
                                                 }
-                                                .padding(EdgeInsets(top: 10, leading: 4, bottom: 10, trailing: 4))
                                                 
+                                                
+                                                if let marketCap = vm.StockOptions.first?.quote.marketCap {
+                                                    let formattedMarketCap = vm.formatLargeNumber(marketCap)
+                                                    HStack {
+                                                        Text("Børsverdi:")
+                                                            .font(.title3)
+                                                            .textSelection(.enabled)
+                                                        Spacer(minLength: 50)
+                                                        Text(formattedMarketCap)
+                                                            .foregroundStyle(LinearGradient(colors: [.teal, .indigo], startPoint: .topLeading, endPoint: .bottomTrailing))
+                                                            .font(.title2)
+                                                            .textSelection(.enabled)
+                                                    }
+                                                    .padding(EdgeInsets(top: 5, leading: 4, bottom: 5, trailing: 4))
+                                                }
+                                                
+                                                if let sharesOutstanding = vm.StockOptions.first?.quote.sharesOutstanding {
+                                                    let formattedSharesOutstanding = vm.formatLargeNumber(sharesOutstanding)
+                                                    HStack {
+                                                        Text("Mengde aksjer:")
+                                                            .font(.title3)
+                                                            .textSelection(.enabled)
+                                                        Spacer(minLength: 50)
+                                                        Text(formattedSharesOutstanding)
+                                                            .foregroundStyle(LinearGradient(colors: [.teal, .indigo], startPoint: .topLeading, endPoint: .bottomTrailing))
+                                                            .font(.title2)
+                                                            .textSelection(.enabled)
+                                                    }
+                                                    .padding(EdgeInsets(top: 5, leading: 4, bottom: 10, trailing: 4))
+                                                }
+                                                
+                                            }
+                                            
+                                            Divider()
+                                            
+                                            VStack(alignment: .leading) {
+                                                if let fiftyTwoWeekHigh = vm.StockOptions.first?.quote.fiftyTwoWeekHigh {
+                                                    HStack {
+                                                        Text("H 52 U:")
+                                                            .font(.title3)
+                                                            .textSelection(.enabled)
+                                                        Spacer(minLength: 50)
+                                                        Text(String(format: "%.2f", fiftyTwoWeekHigh).replacingOccurrences(of: ".", with: ","))
+                                                            .foregroundStyle(LinearGradient(colors: [.teal, .indigo], startPoint: .topLeading, endPoint: .bottomTrailing))
+                                                            .font(.title2)
+                                                            .textSelection(.enabled)
+                                                    }
+                                                    .padding(EdgeInsets(top: 10, leading: 4, bottom: 5, trailing: 4))
+                                                }
+                                                
+                                                if let fiftyTwoWeekLow = vm.StockOptions.first?.quote.fiftyTwoWeekLow {
+                                                    HStack {
+                                                        Text("L 52 U:")
+                                                            .font(.title3)
+                                                            .textSelection(.enabled)
+                                                        Spacer(minLength: 50)
+                                                        Text(String(format: "%.2f", fiftyTwoWeekLow).replacingOccurrences(of: ".", with: ","))
+                                                            .foregroundStyle(LinearGradient(colors: [.teal, .indigo], startPoint: .topLeading, endPoint: .bottomTrailing))
+                                                            .font(.title2)
+                                                            .textSelection(.enabled)
+                                                    }
+                                                    .padding(EdgeInsets(top: 5, leading: 4, bottom: 5, trailing: 4))
+                                                }
+                                                
+                                                if let regularMarketChangePercent = vm.StockOptions.first?.quote.regularMarketChangePercent {
+                                                    HStack {
+                                                        Text("Pris endring:")
+                                                            .font(.title3)
+                                                            .textSelection(.enabled)
+                                                        Spacer(minLength: 50)
+                                                        Text("\(String(format: "%.2f", regularMarketChangePercent).replacingOccurrences(of: ".", with: ","))%")
+                                                            .foregroundStyle(LinearGradient(colors: [.teal, .indigo], startPoint: .topLeading, endPoint: .bottomTrailing))
+                                                            .font(.title2)
+                                                            .textSelection(.enabled)
+                                                    }
+                                                    .padding(EdgeInsets(top: 5, leading: 4, bottom: 10, trailing: 4))
+                                                }
+                                                
+                                                
+                                            }
+                                            
+                                            Divider()
+                                            
+                                            VStack(alignment: .leading) {
+                                                if let averageDailyVolume3Month = vm.StockOptions.first?.quote.averageDailyVolume3Month {
+                                                    let formattedAverageDailyVolume3Month = vm.formatLargeNumber(averageDailyVolume3Month)
+                                                    HStack {
+                                                        Text("Snittvolum:")
+                                                            .font(.title3)
+                                                            .textSelection(.enabled)
+                                                        Spacer(minLength: 50)
+                                                        Text(formattedAverageDailyVolume3Month)
+                                                            .foregroundStyle(LinearGradient(colors: [.teal, .indigo], startPoint: .topLeading, endPoint: .bottomTrailing))
+                                                            .font(.title2)
+                                                            .textSelection(.enabled)
+                                                    }
+                                                    .padding(EdgeInsets(top: 10, leading: 4, bottom: 5, trailing: 4))
+                                                }
+                                                
+                                                if let pe = vm.StockOptions.first?.quote.trailingPE {
+                                                    HStack {
+                                                        Text("P/E:")
+                                                            .font(.title3)
+                                                            .textSelection(.enabled)
+                                                        Spacer(minLength: 50)
+                                                        Text(String(format: "%.2f", pe).replacingOccurrences(of: ".", with: ","))
+                                                            .foregroundStyle(LinearGradient(colors: [.teal, .indigo], startPoint: .topLeading, endPoint: .bottomTrailing))
+                                                            .font(.title2)
+                                                            .textSelection(.enabled)
+                                                    }
+                                                    .padding(EdgeInsets(top: 5, leading: 4, bottom: 5, trailing: 4))
+                                                }
+                                                
+                                                
+                                                if let epsTrailingTwelveMonths = vm.StockOptions.first?.quote.epsTrailingTwelveMonths {
+                                                    HStack {
+                                                        Text("EPS:")
+                                                            .font(.title3)
+                                                            .textSelection(.enabled)
+                                                        Spacer(minLength: 50)
+                                                        Text(String(epsTrailingTwelveMonths).replacingOccurrences(of: ".", with: ","))
+                                                            .foregroundStyle(LinearGradient(colors: [.teal, .indigo], startPoint: .topLeading, endPoint: .bottomTrailing))
+                                                            .font(.title2)
+                                                            .textSelection(.enabled)
+                                                    }
+                                                    .padding(EdgeInsets(top: 5, leading: 4, bottom: 10, trailing: 4))
+                                                }
+                                                
+                                            }
+                                            
+                                            Divider()
+                                            
+                                            VStack(alignment: .leading) {
                                                 HStack {
                                                     Text("Tidssone:")
                                                         .font(.title3)
@@ -411,13 +534,7 @@ struct FollowedStockView: View {
                                                         .font(.title2)
                                                         .textSelection(.enabled)
                                                 }
-                                                .padding(EdgeInsets(top: 10, leading: 4, bottom: 10, trailing: 4))
-                                                
-                                            }
-                                            
-                                            Divider()
-                                            
-                                            VStack(alignment: .leading) {
+                                                .padding(EdgeInsets(top: 10, leading: 4, bottom: 5, trailing: 4))
                                                 
                                                 HStack {
                                                     Text("Børs:")
@@ -429,7 +546,7 @@ struct FollowedStockView: View {
                                                         .font(.title2)
                                                         .textSelection(.enabled)
                                                 }
-                                                .padding(EdgeInsets(top: 10, leading: 4, bottom: 10, trailing: 4))
+                                                .padding(EdgeInsets(top: 5, leading: 4, bottom: 5, trailing: 4))
                                                 
                                                 HStack {
                                                     Text("Børs Sted:")
@@ -441,14 +558,16 @@ struct FollowedStockView: View {
                                                         .font(.title2)
                                                         .textSelection(.enabled)
                                                 }
-                                                .padding(EdgeInsets(top: 10, leading: 4, bottom: 10, trailing: 4))
+                                                .padding(EdgeInsets(top: 5, leading: 4, bottom: 10, trailing: 4))
+                                                
+                                                
                                                 
                                             }
                                             
                                         }
                                         .padding(EdgeInsets(top: 0, leading: 0, bottom: 3, trailing: 0))
                                     }
-                                    .frame(height: 100)
+                                    .frame(height: 120)
                                     .scrollIndicators(.hidden)
                                     
                                     
@@ -469,18 +588,18 @@ struct FollowedStockView: View {
                                                 Text("\(news.title)")
                                                     .font(.title2)
                                                     .fontWeight(.semibold)
-                                                    .padding(EdgeInsets(top: 0, leading: 5, bottom: 5, trailing: 5))
+                                                    .padding(EdgeInsets(top: 0, leading: 0, bottom: 5, trailing: 5))
                                                     .lineLimit(3)
                                                 
                                                 Text("\(news.description)")
                                                     .font(.callout)
-                                                    .padding(5)
+                                                    .padding(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 5))
                                                     .lineLimit(2)
                                                     .fixedSize(horizontal: false, vertical: true)
 //                                                    .foregroundStyle(Color("ColorGray"))
                                                 
                                                 Text("\(vm.formattedTimeAgo(from: news.pubDate))")
-                                                    .padding(EdgeInsets(top: 5, leading: 5, bottom: 0, trailing: 5))
+                                                    .padding(EdgeInsets(top: 5, leading: 0, bottom: 0, trailing: 5))
                                                     .font(.subheadline)
                                                     .foregroundStyle(LinearGradient(colors: [.teal, .indigo], startPoint: .topLeading, endPoint: .bottomTrailing))
 //                                                    .foregroundStyle(Color.gray)
@@ -515,19 +634,19 @@ struct FollowedStockView: View {
                                                 Text("\(news.title)")
                                                     .font(.title2)
                                                     .fontWeight(.semibold)
-                                                    .padding(5)
+                                                    .padding(EdgeInsets(top: 0, leading: 0, bottom: 5, trailing: 5))
                                                     .lineLimit(3)
-                                                    .foregroundStyle(LinearGradient(colors: [.teal, .indigo], startPoint: .topLeading, endPoint: .bottomTrailing))
+//                                                    .foregroundStyle(LinearGradient(colors: [.teal, .indigo], startPoint: .topLeading, endPoint: .bottomTrailing))
                                                 
                                                 Text("\(news.description)")
                                                     .font(.callout)
-                                                    .padding(5)
+                                                    .padding(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 5))
                                                     .lineLimit(2)
                                                     .fixedSize(horizontal: false, vertical: true)
 //                                                    .foregroundStyle(Color("ColorGray"))
                                                 
                                                 Text("\(news.pubDate)")
-                                                    .padding(5)
+                                                    .padding(EdgeInsets(top: 5, leading: 0, bottom: 0, trailing: 5))
                                                     .font(.subheadline)
                                                     .foregroundStyle(LinearGradient(colors: [.teal, .indigo], startPoint: .topLeading, endPoint: .bottomTrailing))
 //                                                    .foregroundStyle(Color.gray)
@@ -569,6 +688,7 @@ struct FollowedStockView: View {
                                 vm.hasShownSnitt200 = false
                                 vm.hasChosenAmount = false
                                 vm.getStockNews()
+                                vm.getStockOptions()
                                 await vm.getNewStockChartAsync()
                                 
                                 
@@ -725,17 +845,9 @@ struct FollowedStockView: View {
             .task {
                 if !vm.isViewLoaded2 {
                     vm.getStockNews()
+                    vm.getStockOptions()
                     await vm.getNewStockChartAsync()
                     vm.isViewLoaded2 = true
-                    
-                }
-            }
-            
-            .task {
-                if !vm.isViewLoaded3 {
-                    
-                    vm.isViewLoaded3 = true
-                    print("Ferdig hentet nyheter!")
                     
                 }
             }
@@ -1326,6 +1438,10 @@ struct FollowedStockView: View {
                 
             }
             
+//            if !vm.isShowingRSI {
+//                
+//            }
+            
         }
         .frame(minHeight: 300)
         .chartXAxis {
@@ -1336,7 +1452,13 @@ struct FollowedStockView: View {
             }
         }
         .chartXScale(domain: vm.testChart.xAxisData.axisStart...vm.testChart.xAxisData.axisEnd)
-        .chartYAxis { vm.chartYAxis }
+        .chartYAxis {
+            if !vm.isShowingRSI {
+                vm.chartYAxis
+            } else {
+                vm.chartYAxis2
+            }
+        }
         .chartYScale(domain: vm.testChart.yAxisData.axisStart...vm.testChart.yAxisData.axisEnd)
         .chartOverlay { proxy in
             GeometryReader { gProxy in
@@ -1392,6 +1514,7 @@ struct FollowedStockView: View {
     
     
 }
+
 
 
 
