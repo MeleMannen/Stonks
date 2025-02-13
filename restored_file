@@ -407,6 +407,8 @@ struct AksjerView: View {
                 if !decodedData.isEmpty && !decodedDataString.isEmpty {
                     followedStocks = decodedData
                     print("Hentet lagrede Aksjer")
+                    followedStocksStrings = decodedDataString
+                    print("Hentet lagrede Aksje strings")
                 } else {
                     print("wtf idk man")
                 }
