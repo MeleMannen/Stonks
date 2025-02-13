@@ -764,10 +764,7 @@ extension APIFetch {
     
     
     func fetchStockSearch(searchInput: String, completion: @escaping (Result<SearchStock, Error>) -> Void) {
-//        let headers = [
-//            "X-RapidAPI-Key": "561eb4fbafmsh5dbf010c70113c6p112a3djsn616b59572848",
-//            "X-RapidAPI-Host": "yahoo-finance15.p.rapidapi.com"
-//        ]
+
         
         let request = NSMutableURLRequest(url: NSURL(string: "https://query1.finance.yahoo.com/v1/finance/search?q=\(searchInput)")! as URL,
                                           cachePolicy: .useProtocolCachePolicy,
@@ -833,10 +830,7 @@ extension APIFetch {
     
     
     func fetchStockData(symbol: String, interval: String, range: String, completion: @escaping (Result<Stock, Error>) -> Void) {
-//        let headers = [
-//            "X-RapidAPI-Key": "561eb4fbafmsh5dbf010c70113c6p112a3djsn616b59572848",
-//            "X-RapidAPI-Host": "yahoo-finance15.p.rapidapi.com"
-//        ]
+
         
         let request = NSMutableURLRequest(url: NSURL(string: "https://query1.finance.yahoo.com/v8/finance/chart/\(symbol)?includePrePost=false&interval=\(interval)&useYfid=true&range=\(range)&corsDomain=finance.yahoo.com&.tsrc=finance")! as URL,
                                           cachePolicy: .useProtocolCachePolicy,
@@ -903,10 +897,7 @@ extension APIFetch {
         }
     }
     
-    /// A function that fetches the latest Stock Options for a given stock
-    /// - Parameters:
-    ///   - symbol: The stock symbol
-    ///   - completion: A completion handler
+
     func fetchStockOptions(symbol: String, completion: @escaping (Result<OptionChainResponse, Error>) -> Void) {
         
         let request = NSMutableURLRequest(url: NSURL(string: "https://query1.finance.yahoo.com/v6/finance/options/\(symbol)?cromb=.tnO1kJnWyn")! as URL,
@@ -974,11 +965,7 @@ extension APIFetch {
 //    }
     
     
-    
-    /// Fetches the latest News for the given Stock symbol
-    /// - Parameters:
-    ///   - symbol: The symbol for the Stock that should get the news
-    ///   - completion: A completion block that either returns a result of type News or an error
+
     func fetchStockNews(symbol: String, completion: @escaping (Result<News, Error>) -> Void) {
         
         let request = NSMutableURLRequest(url: NSURL(string: "https://api.rss2json.com/v1/api.json?rss_url=http://feeds.finance.yahoo.com/rss/2.0/headline?s=\(symbol)")! as URL,
