@@ -21,7 +21,6 @@ struct AksjerApp: App {
         WindowGroup {
             ContentView()
                 .preferredColorScheme(appTheme == .system ? nil : (appTheme == .light ? .light : .dark))
-//                .tint(LinearGradient(colors: [.teal, .indigo], startPoint: .topLeading, endPoint: .bottomTrailing))
         }
     }
 }

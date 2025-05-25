@@ -53,7 +53,7 @@ struct FollowedStockView: View {
                         
                     }
                     .listRowSeparator(.hidden)
-                    .padding(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 0))
+                    .padding(EdgeInsets(top: 50, leading: 20, bottom: 0, trailing: 0))
                     
                     Divider()
                         .padding(EdgeInsets(top: 0, leading: 15, bottom: 0, trailing: 0))
@@ -1375,72 +1375,9 @@ struct FollowedStockView: View {
                     .foregroundStyle(.cyan)
             }
             
+            ChartView2(vm: vm)
             
             
-            if let (selectedX, text) = vm.selectedXRuleMark {
-                
-                RuleMark(x: .value("Valgt tidspunkt", selectedX))
-                    .lineStyle(.init(lineWidth: 1))
-                    .foregroundStyle(.cyan)
-                    .annotation(overflowResolution: .init(x: .fit(to: .chart))) {
-                        
-                        Text(text.replacingOccurrences(of: ".", with: ","))
-                            .font(.headline)
-                            .overlay(
-                                LinearGradient(gradient: Gradient(colors: [.teal, .indigo]), startPoint: .topLeading, endPoint: .bottomTrailing)
-                                    .mask(Text(text.replacingOccurrences(of: ".", with: ","))
-                                        .font(.headline))
-                            )
-                    }
-                
-                
-                if let number = Float(text) {
-                    PointMark(x: .value("Valgt tidspunkt", selectedX), y: .value("Valgt tidspunkt", number))
-                        .symbolSize(250)
-                        .shadow(color: .black, radius: 4)
-                    
-                        .foregroundStyle(.cyan)
-                    
-                    RuleMark(y: .value("Valgt tidspunkt", number))
-                        .lineStyle(.init(lineWidth: 1))
-                    
-                        .foregroundStyle(.cyan)
-                }
-                
-                
-            }
-            
-            if let (selectedX, selectedY) = vm.selectedXRuleMark2 {
-                let text = String(selectedY.roundedString)
-                RuleMark(x: .value("Valgt tidspunkt", selectedX))
-                    .lineStyle(.init(lineWidth: 1))
-                    .foregroundStyle(.cyan)
-                    .annotation(overflowResolution: .init(x: .fit(to: .chart))) {
-                        Text(text.replacingOccurrences(of: ".", with: ","))
-                            .font(.headline)
-                            .overlay(
-                                LinearGradient(gradient: Gradient(colors: [.teal, .indigo]), startPoint: .topLeading, endPoint: .bottomTrailing)
-                                    .mask(Text(text.replacingOccurrences(of: ".", with: ","))
-                                        .font(.headline))
-                            )
-                    }
-                
-                
-                PointMark(x: .value("Valgt tidspunkt", selectedX), y: .value("Valgt tidspunkt", selectedY))
-                    .symbolSize(100)
-                    .shadow(color: .black, radius: 4)
-                    .foregroundStyle(.cyan)
-                
-                RuleMark(y: .value("Valgt tidspunkt", selectedY))
-                    .lineStyle(.init(lineWidth: 1))
-                    .foregroundStyle(.cyan)
-                    .mask { RectangleMark() }
-                
-            }
-            
-//            if !vm.isShowingRSI {
-//                
-//            }
             
         }
         .frame(minHeight: 300)
@@ -1513,7 +1450,77 @@ struct FollowedStockView: View {
     }
     
     
+    
+    
 }
+
+struct ChartView2: ChartContent {
+    @ObservedObject var vm: ViewModel
+            
+    var body: some ChartContent {
+        if let (selectedX, text) = vm.selectedXRuleMark {
+            RuleMark(x: .value("Valgt tidspunkt", selectedX))
+                .lineStyle(.init(lineWidth: 1))
+                .foregroundStyle(.cyan)
+                .annotation(overflowResolution: .init(x: .fit(to: .chart))) {
+                    
+                    Text(text.replacingOccurrences(of: ".", with: ","))
+                        .font(.headline)
+                        .overlay(
+                            LinearGradient(gradient: Gradient(colors: [.teal, .indigo]), startPoint: .topLeading, endPoint: .bottomTrailing)
+                                .mask(Text(text.replacingOccurrences(of: ".", with: ","))
+                                    .font(.headline))
+                        )
+                }
+            
+            
+            if let number = Float(text) {
+                PointMark(x: .value("Valgt tidspunkt", selectedX), y: .value("Valgt tidspunkt", number))
+                    .symbolSize(250)
+                    .shadow(color: .black, radius: 4)
+                
+                    .foregroundStyle(.cyan)
+                
+                RuleMark(y: .value("Valgt tidspunkt", number))
+                    .lineStyle(.init(lineWidth: 1))
+                
+                    .foregroundStyle(.cyan)
+            }
+            
+            
+        }
+        
+        if let (selectedX, selectedY) = vm.selectedXRuleMark2 {
+            let text = String(selectedY.roundedString)
+            RuleMark(x: .value("Valgt tidspunkt", selectedX))
+                .lineStyle(.init(lineWidth: 1))
+                .foregroundStyle(.cyan)
+                .annotation(overflowResolution: .init(x: .fit(to: .chart))) {
+                    Text(text.replacingOccurrences(of: ".", with: ","))
+                        .font(.headline)
+                        .overlay(
+                            LinearGradient(gradient: Gradient(colors: [.teal, .indigo]), startPoint: .topLeading, endPoint: .bottomTrailing)
+                                .mask(Text(text.replacingOccurrences(of: ".", with: ","))
+                                    .font(.headline))
+                        )
+                }
+            
+            
+            PointMark(x: .value("Valgt tidspunkt", selectedX), y: .value("Valgt tidspunkt", selectedY))
+                .symbolSize(100)
+                .shadow(color: .black, radius: 4)
+                .foregroundStyle(.cyan)
+            
+            RuleMark(y: .value("Valgt tidspunkt", selectedY))
+                .lineStyle(.init(lineWidth: 1))
+                .foregroundStyle(.cyan)
+                .mask { RectangleMark() }
+            
+        }
+        
+    }
+}
+
 
 
 

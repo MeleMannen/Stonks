@@ -760,12 +760,7 @@ final class APIFetch {
 }
 
 extension APIFetch {
-    
-    
-    
     func fetchStockSearch(searchInput: String, completion: @escaping (Result<SearchStock, Error>) -> Void) {
-
-        
         let request = NSMutableURLRequest(url: NSURL(string: "https://query1.finance.yahoo.com/v1/finance/search?q=\(searchInput)")! as URL,
                                           cachePolicy: .useProtocolCachePolicy,
                                           timeoutInterval: 10.0)
@@ -900,10 +895,14 @@ extension APIFetch {
 
     func fetchStockOptions(symbol: String, completion: @escaping (Result<OptionChainResponse, Error>) -> Void) {
         
-        let request = NSMutableURLRequest(url: NSURL(string: "https://query1.finance.yahoo.com/v6/finance/options/\(symbol)?cromb=.tnO1kJnWyn")! as URL,
+        let request = NSMutableURLRequest(url: NSURL(string: "https://query1.finance.yahoo.com/v7/finance/options/\(symbol)?crumb=h9VbRiRZHtD")! as URL,
                                           cachePolicy: .useProtocolCachePolicy,
                                           timeoutInterval: 20.0)
         request.httpMethod = "GET"
+        request.addValue("query1.finance.yahoo.com", forHTTPHeaderField: "Host")
+        request.addValue("Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:138.0) Gecko/20100101 Firefox/138.0", forHTTPHeaderField: "User-Agent")
+        request.addValue("A1=d=AQABBIIWM2gCEONUbj6WD-KjK3Jpa7QckPQFEgABCAFoNGhkaPmfzSMAAiAAAAcIghYzaLQckPQ&S=AQAAAvG2pcbbJqYcFwh2Jy_mQdM; A3=d=AQABBIIWM2gCEONUbj6WD-KjK3Jpa7QckPQFEgABCAFoNGhkaPmfzSMAAiAAAAcIghYzaLQckPQ&S=AQAAAvG2pcbbJqYcFwh2Jy_mQdM; A1S=d=AQABBIIWM2gCEONUbj6WD-KjK3Jpa7QckPQFEgABCAFoNGhkaPmfzSMAAiAAAAcIghYzaLQckPQ&S=AQAAAvG2pcbbJqYcFwh2Jy_mQdM; GUCS=AT5-WzKq; GUC=AQABCAFoNGhoZEIcTgPy&s=AQAAAProeT2F&g=aDMcLA; EuConsent=CQR96cAQR96cAAOACKNBBrFgAAAAAAAAACiQAAAAAAAA; cmp=t=1748180004&j=1&u=1---&v=81; PRF=t%3DAAPL%26dock-collapsed%3Dtrue", forHTTPHeaderField: "Cookie")
+//        print("Request: \(request), header: \(request.allHTTPHeaderFields)")
         
         let session = URLSession.shared
         session.configuration.timeoutIntervalForResource = 120
